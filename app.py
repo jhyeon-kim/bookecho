@@ -10,9 +10,11 @@ app = Flask(__name__)
 def before_request():
     connect_to_pinecone()
 
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/upsert', methods=['POST', 'GET'])
 def upsert_data():
@@ -20,11 +22,18 @@ def upsert_data():
         return upsert_post()
     return render_template('upsert.html')
 
+
 @app.route('/query', methods=['GET', 'POST'])
 def query_data():
     if request.method == 'POST':
         return query_post()
     return render_template('query.html')
+
+
+@app.route('/list', methods=['GET'])
+def list_data():
+    return list_get()
+
 
 # Upsert and Query POST methods
 def upsert_post():
@@ -36,16 +45,20 @@ def upsert_post():
     upsert_data(sentences)
     return jsonify({"message": "Data upserted successfully"}), 200
 
+
 def query_post():
     data = request.get_json()  # Get the JSON data sent in the request
     if 'query' not in data:
         return jsonify({"message": "No query provided"}), 400
 
     query = data['query']  # Extract the query
+    print(f"🔍 query: {query}")
     query_em = g.model.encode(query).tolist()
     result = g.index.query(query_em, top_k=1, includeMetadata=True)
     result_data = result.get('matches')[0].get('metadata').get('content')
+    print(f"😵‍💫 response: {result_data}")
     return {"response": result_data}, 200
+
 
 # Upsert helper function
 def upsert_data(sentences):
@@ -62,6 +75,13 @@ def upsert_data(sentences):
             )
         )
     g.index.upsert(vectors=upserted_data)
+
+
+def list_get():
+    fetch = g.index.fetch(ids=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+    print(f"fetch: {fetch}")
+    return jsonify(fetch), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

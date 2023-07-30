@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Query Data</title>
+    <title>질문하기</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
     <script>
         function queryData() {
-            // Extract the query from the textarea
             var query = document.getElementById("query").value;
-
-            // Prepare the request payload
             var payload = {
                 query: query
             };
-
-            // Use fetch to send a POST request
             fetch('/query', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload) // Convert the JavaScript object to a JSON string
-            }).then(function(response) {
+                body: JSON.stringify(payload)
+            }).then(function (response) {
+                console.log(`1. Response status: ${response.status}`);
                 if (!response.ok) {
                     throw new Error("HTTP error " + response.status);
                 }
+                console.log('Response status: ' + response.status);
+                console.log('Response status text: ' + response.statusText);
                 return response.json();
-            }).then(function(result) {
-                // Display the result in the div
-                document.getElementById("result").innerText = JSON.stringify(result, null, 2);
-            }).catch(function(error) {
+            }).then(function (result) {
+                console.log(`2. result: ${result}`);
+                document.getElementById("result").innerText = result.response;
+            }).catch(function (error) {
                 console.log(error);
             });
         }
+
     </script>
 </head>
-<body>
-    <h1>Query Data</h1>
-    <textarea id="query" rows="10" cols="30"></textarea>
-    <br>
-    <button onclick="queryData()">Query Data</button>
-    <div id="result"></div>
+
+<body class="container pt-5">
+<h1 class="mb-5">질문하기</h1>
+<textarea id="query" class="form-control mb-3" rows="10"></textarea>
+<button class="btn btn-primary mb-3" onclick="queryData()">질문제출</button>
+<div id="result" class="border p-3 rounded bg-light"></div>
 </body>
+
 </html>
