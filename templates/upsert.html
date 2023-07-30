@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upsert Data</title>
+    <script>
+        function upsertData() {
+            // Extract the data from the textarea
+            const data = document.getElementById("data").value.split("\n");
+
+            // Prepare the request payload
+            const payload = {
+                data: data
+            };
+
+            // Use fetch to send a POST request
+            fetch('/upsert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload) // Convert the JavaScript object to a JSON string
+            }).then(function(response) {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            }).then(function(result) {
+                alert(result.message);
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Upsert Data</h1>
+    <textarea id="data" rows="10" cols="30"></textarea>
+    <br>
+    <button onclick="upsertData()">Upsert Data</button>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Query Data</title>
+    <script>
+        function queryData() {
+            // Extract the query from the textarea
+            var query = document.getElementById("query").value;
+
+            // Prepare the request payload
+            var payload = {
+                query: query
+            };
+
+            // Use fetch to send a POST request
+            fetch('/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload) // Convert the JavaScript object to a JSON string
+            }).then(function(response) {
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                return response.json();
+            }).then(function(result) {
+                // Display the result in the div
+                document.getElementById("result").innerText = JSON.stringify(result, null, 2);
+            }).catch(function(error) {
+                console.log(error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Query Data</h1>
+    <textarea id="query" rows="10" cols="30"></textarea>
+    <br>
+    <button onclick="queryData()">Query Data</button>
+    <div id="result"></div>
+</body>
+</html>
